@@ -1,0 +1,39 @@
+# --- CONFIGURACIÓN DEL ESCENARIO ---
+pos_B, pos_A, paso = 0.0, -1.5, 0.5  # Variables de posición de inicio, objetivo y longitud de pasos en mm
+
+h = lambda x: abs(x - pos_A)  # Heurística: distancia al relieve profundo
+
+# --- 1. BÚSQUEDA EXHAUSTIVA ---
+
+def busqueda_exhaustiva():
+    print("--- 1. BÚSQUEDA EXHAUSTIVA ---")
+    pos_actual, i = pos_B, 1
+    while True:
+        print(f"Palpado {i}: Posición {pos_actual:+.1f} mm | Distancia: {h(pos_actual):.1f}")
+        if h(pos_actual) == 0:
+            print(f"--> Éxito: Encontrado A en {i} pasos.\n")
+            return i
+        signo = 1 if i % 2 != 0 else -1
+        pos_actual = pos_B + signo * ((i + 1) // 2) * paso
+        i += 1
+
+# --- 2. BÚSQUEDA HEURÍSTICA utilizando H(N) ---
+def busqueda_heuristica():
+    print("--- 2. BÚSQUEDA HEURÍSTICA ---")
+    pos_actual, pasos = pos_B, 0
+    while True:
+        print(f"Movimiento {pasos}: Posición {pos_actual:+.1f} mm | h(n) = {h(pos_actual):.1f}")
+        if h(pos_actual) == 0:
+            print(f"--> Éxito: Convergencia a A en {pasos} movimientos.\n")
+            return pasos
+        # Elige el vecino (derecha o izquierda) que reduzca la función H(N)
+        vecinos = [pos_actual + paso, pos_actual - paso]
+        pos_actual = min(vecinos, key=h)
+        pasos += 1
+
+
+# EJECUCIÓN DE LAS FUNCIONES
+
+if __name__ == "__main__":
+    busqueda_exhaustiva()
+    busqueda_heuristica()
